@@ -235,6 +235,7 @@
     <h1 id="greetingText">Assalamualaikum, Ustadz/Ustadzah 👋</h1>
     <p>Semua tautan penting untuk kegiatan mengajar dan administrasi, terkumpul dalam satu tempat yang nyaman diakses kapan saja.</p>
     <span class="tag" id="dateTag">📅 —</span>
+    <span class="tag" id="liveStatus">⏳ Menyambungkan ke Google Sheets…</span>
   </div>
 
   <div class="search-box">
@@ -271,8 +272,8 @@
 
 <script>
   // ============ KONFIGURASI ============
-  // Tempel URL Web App Google Apps Script hasil deploy di sini.
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbzs2NhcZB3eekDXXM7hj-4LIouxp8oFH93gc3evEBQdxk5NgMxQhX2h5xnYQGWyyvfo/exec';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbzrtl0TD81m61gkFbXtkWjlsh9fIPldNVjmm9zLCN8IagG5DTmJmsYfpzJMlABokAU_/exec';
+  const REFRESH_INTERVAL_MS = 60000; // ambil ulang data setiap 60 detik agar selalu sinkron dengan Google Sheets
 
   const UNITS = [
     { key: 'Semua', label: 'Semua', emoji: '🌈' },
@@ -323,29 +324,10 @@
     });
   }
 
-  // Data contoh — tampil otomatis selama GAS_URL belum diisi, supaya tampilan
-  // bisa langsung dilihat sebelum backend Google Sheets terpasang.
-  const DEMO_LINKS = [
-    { id:'1', kategori:'Admin & Operasional', unit:'Semua', judul:'Kalender Pendidikan', url:'#', emoji:'📅', urutan:1 },
-    { id:'2', kategori:'Admin & Operasional', unit:'Semua', judul:'Absensi', url:'#', emoji:'✅', urutan:2 },
-    { id:'3', kategori:'Admin & Operasional', unit:'Semua', judul:'Proposal & LPJ Panitia', url:'#', emoji:'📋', urutan:3 },
-    { id:'4', kategori:'Admin & Operasional', unit:'Semua', judul:'Admin Pembelajaran', url:'#', emoji:'🗂️', urutan:4 },
-    { id:'5', kategori:'Admin & Operasional', unit:'Semua', judul:'Roster Pelajaran', url:'#', emoji:'🗓️', urutan:5 },
-    { id:'6', kategori:'Aplikasi Sekolah', unit:'Semua', judul:'Aplikasi SAVA', url:'#', emoji:'📱', urutan:1 },
-    { id:'7', kategori:'Kurikulum & Pembelajaran', unit:'Semua', judul:'Bilingual', url:'#', emoji:'🌐', urutan:1 },
-    { id:'8', kategori:'Kurikulum & Pembelajaran', unit:'Semua', judul:'File Korjen Korbid', url:'#', emoji:'🗃️', urutan:2 },
-    { id:'9', kategori:'Kurikulum & Pembelajaran', unit:'Semua', judul:'Rekap Jam dan Admin', url:'#', emoji:'⏰', urutan:3 },
-    { id:'10', kategori:'Kurikulum & Pembelajaran', unit:'SMPIT,SMAIT', judul:'Materi Sains Kelas 3-4-5', url:'#', emoji:'🔬', urutan:4 },
-    { id:'11', kategori:'Rohani & WAFA', unit:'Semua', judul:'Murattal WAFA', url:'#', emoji:'🕌', urutan:1 },
-    { id:'12', kategori:'Lainnya', unit:'Semua', judul:'Photo Gallery', url:'#', emoji:'🖼️', urutan:1 }
-  ];
-
-  // ============ Ambil data dari Apps Script ============
-  function loadLinks(){
-    if (GAS_URL.indexOf('https://script.google.com/macros/s/AKfycbzs2NhcZB3eekDXXM7hj-4LIouxp8oFH93gc3evEBQdxk5NgMxQhX2h5xnYQGWyyvfo/exec') !== -1){
-      allLinks = DEMO_LINKS;
-      renderContent();
-      return;
+  // ============ Ambil data dari Apps Script (Google Sheets) ============
+  function loadLinks(isBackgroundRefresh){
+    if (!isBackgroundRefresh){
+      setLiveStatus('loading');
     }
     fetch(GAS_URL + '?action=getPublicLinks')
       .then(function(res){ return res.json(); })
@@ -353,13 +335,38 @@
         if (json.status === 'ok'){
           allLinks = json.data;
           renderContent();
+          setLiveStatus('connected');
         } else {
-          showError(json.message || 'Gagal memuat data.');
+          setLiveStatus('error');
+          if (!isBackgroundRefresh) showError(json.message || 'Gagal memuat data.');
         }
       })
       .catch(function(){
-        showError('Tidak dapat terhubung ke server. Periksa koneksi internet Ustadz/Ustadzah.');
+        setLiveStatus('error');
+        if (!isBackgroundRefresh){
+          showError('Tidak dapat terhubung ke server. Periksa koneksi internet Ustadz/Ustadzah.');
+        }
       });
+  }
+
+  function setLiveStatus(state){
+    const el = document.getElementById('liveStatus');
+    if (!el) return;
+    const now = new Date();
+    const jam = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
+    if (state === 'loading'){
+      el.textContent = '⏳ Menyambungkan ke Google Sheets…';
+    } else if (state === 'connected'){
+      el.textContent = '🟢 Tersambung real-time · diperbarui ' + jam;
+    } else {
+      el.textContent = '🔴 Gagal tersambung · dicoba lagi otomatis';
+    }
+  }
+
+  // Ambil ulang data secara berkala di latar belakang, tanpa mengganggu
+  // pencarian/filter yang sedang aktif, supaya menu selalu sinkron dengan Sheets.
+  function startAutoRefresh(){
+    setInterval(function(){ loadLinks(true); }, REFRESH_INTERVAL_MS);
   }
 
   function showError(msg){
@@ -481,22 +488,6 @@
     }
     msgEl.textContent = 'Memeriksa…';
 
-    if (GAS_URL.indexOf('PASTE_URL') !== -1){
-      // Mode demo (backend belum terpasang) — gunakan password "demo123"
-      setTimeout(function(){
-        if (password === 'demo123'){
-          unlockedGroups[currentUnlockGroup] = [
-            { id:'d1', judul: currentUnlockGroup === 'YAYASAN' ? 'Laporan Keuangan Yayasan' : 'Dashboard Eksekutif', url:'#', emoji: currentUnlockGroup === 'YAYASAN' ? '💰' : '📊' }
-          ];
-          closeModal();
-          renderContent();
-        } else {
-          msgEl.textContent = 'Password salah. Coba "demo123" untuk mode pratinjau.';
-        }
-      }, 300);
-      return;
-    }
-
     fetch(GAS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
@@ -521,7 +512,8 @@
   document.getElementById('searchInput').addEventListener('input', renderContent);
   initGreeting();
   renderFilters();
-  loadLinks();
+  loadLinks(false);
+  startAutoRefresh();
 </script>
 
 </body>
