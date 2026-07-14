@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Guru — Ar-Rahmah Sulawesi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary: #0EA5E9;
+    --primary-dark: #0284C7;
+    --primary-light: #38BDF8;
+    --primary-tint: #E0F2FE;
+    --bg: #F5FAFF;
+    --white: #FFFFFF;
+    --gold: #F5B942;
+    --gold-dark: #DB9A28;
+    --text: #1E3A5F;
+    --text-muted: #64748B;
+    --error: #F0653E;
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --shadow-soft: 0 8px 24px rgba(14, 165, 233, 0.14);
+    --shadow-lift: 0 14px 32px rgba(14, 165, 233, 0.22);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin: 0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 8% 8%, rgba(56,189,248,0.10) 0, transparent 45%),
+      radial-gradient(circle at 95% 18%, rgba(245,185,66,0.10) 0, transparent 40%);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, .brand{ font-family: 'Quicksand', sans-serif; }
+
+  .wrap{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 20px 20px 60px;
+  }
+
+  /* ===== Topbar ===== */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 22px;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:20px; color: var(--primary-dark); }
+  .brand .logo{
+    width:42px; height:42px; border-radius:14px;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; box-shadow: var(--shadow-soft);
+  }
+  .brand-sub{ font-size:12px; font-weight:500; color: var(--text-muted); display:block; }
+
+  /* ===== Hero / Sapaan ===== */
+  .hero{
+    background: linear-gradient(120deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: var(--radius-lg);
+    padding: 28px 30px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lift);
+    margin-bottom: 22px;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; right:-40px; top:-40px;
+    width:180px; height:180px; border-radius:50%;
+    background: rgba(255,255,255,0.12);
+  }
+  .hero::before{
+    content:"";
+    position:absolute; right:60px; bottom:-60px;
+    width:120px; height:120px; border-radius:50%;
+    background: rgba(255,255,255,0.10);
+  }
+  .hero h1{ margin: 0 0 6px; font-size: 24px; position:relative; z-index:1; }
+  .hero p{ margin: 0; font-size: 14.5px; opacity: 0.95; position:relative; z-index:1; max-width: 560px; }
+  .hero .tag{
+    display:inline-flex; align-items:center; gap:6px;
+    background: rgba(255,255,255,0.18);
+    padding: 6px 14px; border-radius: 999px; font-size: 12.5px; font-weight:600;
+    margin-top: 14px; position:relative; z-index:1;
+  }
+
+  /* ===== Search ===== */
+  .search-box{
+    background: var(--white);
+    border-radius: 999px;
+    box-shadow: var(--shadow-soft);
+    padding: 4px 6px 4px 18px;
+    display:flex; align-items:center; gap:10px;
+    margin-bottom: 18px;
+  }
+  .search-box input{
+    border:none; outline:none; flex:1; font-family:inherit;
+    font-size: 14.5px; padding: 12px 0; color: var(--text); background: transparent;
+  }
+  .search-box input::placeholder{ color: #9FB3C8; }
+  .search-box .go{
+    width:38px; height:38px; border-radius:50%;
+    background: var(--gold); display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; font-size:16px;
+  }
+
+  /* ===== Filter chip unit ===== */
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 26px; }
+  .chip{
+    border: none; cursor:pointer; font-family:inherit;
+    background: var(--white); color: var(--text);
+    padding: 9px 18px; border-radius: 999px; font-size: 13.5px; font-weight:600;
+    box-shadow: 0 3px 10px rgba(14,165,233,0.10);
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease;
+  }
+  .chip:hover{ transform: translateY(-1px); }
+  .chip.active{
+    background: var(--primary); color:#fff;
+    box-shadow: 0 6px 16px rgba(14,165,233,0.35);
+  }
+
+  /* ===== Section kategori ===== */
+  .section{ margin-bottom: 30px; }
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom: 14px;
+  }
+  .section-head h2{ font-size: 17px; margin:0; color: var(--primary-dark); }
+  .section-head .count{
+    font-size: 12px; color: var(--text-muted); font-weight:600;
+    background: var(--primary-tint); padding: 3px 11px; border-radius: 999px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+  }
+
+  .card{
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 18px 14px;
+    text-align:center;
+    text-decoration:none;
+    color: var(--text);
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    box-shadow: 0 4px 14px rgba(14,165,233,0.10);
+    transition: transform .18s ease, box-shadow .18s ease;
+    border: 1px solid rgba(14,165,233,0.06);
+  }
+  .card:hover{ transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+  .card .icon{
+    width:54px; height:54px; border-radius:16px;
+    background: var(--primary-tint);
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px;
+  }
+  .card .title{ font-size: 13px; font-weight:600; line-height:1.35; }
+
+  .card.locked{ background: linear-gradient(160deg, #FFF7E8, #FFFFFF); border: 1px dashed var(--gold); cursor: pointer; }
+  .card.locked .icon{ background: #FDECC8; }
+
+  /* ===== Empty state ===== */
+  .empty{
+    text-align:center; padding: 50px 20px; color: var(--text-muted);
+  }
+  .empty .e-icon{ font-size: 40px; margin-bottom: 10px; }
+
+  /* ===== Modal ===== */
+  .modal-overlay{
+    position: fixed; inset:0; background: rgba(14,44,74,0.45);
+    display:none; align-items:center; justify-content:center; padding:20px; z-index:50;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal{
+    background: #fff; border-radius: var(--radius-lg); padding: 26px 24px;
+    width: 100%; max-width: 360px; box-shadow: var(--shadow-lift);
+    text-align:center;
+  }
+  .modal .m-icon{
+    width:56px; height:56px; border-radius:16px; margin:0 auto 12px;
+    background: var(--primary-tint); display:flex; align-items:center; justify-content:center; font-size:26px;
+  }
+  .modal h3{ margin: 0 0 6px; font-size:17px; }
+  .modal p{ margin:0 0 16px; font-size: 13px; color: var(--text-muted); }
+  .modal input{
+    width:100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid #E2ECF5;
+    font-family: inherit; font-size:14px; outline:none; margin-bottom: 10px; text-align:center;
+  }
+  .modal input:focus{ border-color: var(--primary); }
+  .modal .msg{ font-size:12.5px; color: var(--error); min-height:16px; margin-bottom:8px; font-weight:600; }
+  .modal-actions{ display:flex; gap:10px; }
+  .btn{
+    flex:1; padding: 12px; border-radius: 12px; border:none; cursor:pointer;
+    font-family: inherit; font-size:14px; font-weight:700;
+  }
+  .btn.primary{ background: var(--primary); color:#fff; }
+  .btn.primary:hover{ background: var(--primary-dark); }
+  .btn.ghost{ background: #F1F5F9; color: var(--text-muted); }
+
+  .foot-note{
+    text-align:center; font-size:12px; color: var(--text-muted); margin-top: 40px;
+  }
+
+  @media (max-width: 480px){
+    .hero h1{ font-size:20px; }
+    .grid{ grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">🔗</div>
+      <div>
+        Portal Guru
+        <span class="brand-sub">Yayasan Ar-Rahmah Sulawesi</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1 id="greetingText">Assalamualaikum, Ustadz/Ustadzah 👋</h1>
+    <p>Semua tautan penting untuk kegiatan mengajar dan administrasi, terkumpul dalam satu tempat yang nyaman diakses kapan saja.</p>
+    <span class="tag" id="dateTag">📅 —</span>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Cari menu, misalnya: absensi, kalender, kurikulum…">
+    <div class="go">🔍</div>
+  </div>
+
+  <div class="filters" id="unitFilters"></div>
+
+  <div id="contentArea">
+    <div class="empty">
+      <div class="e-icon">⏳</div>
+      Memuat data portal…
+    </div>
+  </div>
+
+  <div class="foot-note">Dibuat dengan 💙 untuk para pendidik Ar-Rahmah Sulawesi</div>
+</div>
+
+<!-- Modal password folder terproteksi -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="m-icon">🔒</div>
+    <h3 id="modalTitle">Folder Terproteksi</h3>
+    <p>Masukkan password untuk membuka folder ini.</p>
+    <input type="password" id="modalPassword" placeholder="Password">
+    <div class="msg" id="modalMsg"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Batal</button>
+      <button class="btn primary" onclick="submitUnlock()">Buka 🔓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============ KONFIGURASI ============
+  // Tempel URL Web App Google Apps Script hasil deploy di sini.
+  const GAS_URL = 'PASTE_URL_WEB_APP_GAS_DI_SINI';
+
+  const UNITS = [
+    { key: 'Semua', label: 'Semua', emoji: '🌈' },
+    { key: 'PAUD', label: 'PAUD', emoji: '🧸' },
+    { key: 'SDIT', label: 'SDIT', emoji: '📖' },
+    { key: 'SMPIT', label: 'SMPIT', emoji: '📘' },
+    { key: 'SMAIT', label: 'SMAIT', emoji: '🎓' },
+  ];
+
+  const PROTECTED_GROUPS = [
+    { key: 'YAYASAN', label: 'Folder Yayasan', emoji: '🏛️' },
+    { key: 'PIMPINAN', label: 'Folder Pimpinan', emoji: '👔' }
+  ];
+
+  let allLinks = [];
+  let activeUnit = 'Semua';
+  let currentUnlockGroup = null;
+  const unlockedGroups = {}; // menyimpan hasil unlock supaya tidak perlu password berulang
+
+  // ============ Sapaan & tanggal berdasar waktu ============
+  function initGreeting(){
+    const hour = new Date().getHours();
+    let sapaan = 'Selamat Pagi', emoji = '☀️';
+    if (hour >= 11 && hour < 15){ sapaan = 'Selamat Siang'; emoji = '🌤️'; }
+    else if (hour >= 15 && hour < 18){ sapaan = 'Selamat Sore'; emoji = '🌇'; }
+    else if (hour >= 18 || hour < 4){ sapaan = 'Selamat Malam'; emoji = '🌙'; }
+
+    document.getElementById('greetingText').textContent =
+      'Assalamualaikum, ' + sapaan + ' Ustadz/Ustadzah ' + emoji;
+
+    const hariList = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const bulanList = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    const now = new Date();
+    document.getElementById('dateTag').textContent =
+      '📅 ' + hariList[now.getDay()] + ', ' + now.getDate() + ' ' + bulanList[now.getMonth()] + ' ' + now.getFullYear();
+  }
+
+  // ============ Render filter unit ============
+  function renderFilters(){
+    const wrap = document.getElementById('unitFilters');
+    wrap.innerHTML = '';
+    UNITS.forEach(function(u){
+      const btn = document.createElement('button');
+      btn.className = 'chip' + (u.key === activeUnit ? ' active' : '');
+      btn.textContent = u.emoji + ' ' + u.label;
+      btn.onclick = function(){ activeUnit = u.key; renderFilters(); renderContent(); };
+      wrap.appendChild(btn);
+    });
+  }
+
+  // Data contoh — tampil otomatis selama GAS_URL belum diisi, supaya tampilan
+  // bisa langsung dilihat sebelum backend Google Sheets terpasang.
+  const DEMO_LINKS = [
+    { id:'1', kategori:'Admin & Operasional', unit:'Semua', judul:'Kalender Pendidikan', url:'#', emoji:'📅', urutan:1 },
+    { id:'2', kategori:'Admin & Operasional', unit:'Semua', judul:'Absensi', url:'#', emoji:'✅', urutan:2 },
+    { id:'3', kategori:'Admin & Operasional', unit:'Semua', judul:'Proposal & LPJ Panitia', url:'#', emoji:'📋', urutan:3 },
+    { id:'4', kategori:'Admin & Operasional', unit:'Semua', judul:'Admin Pembelajaran', url:'#', emoji:'🗂️', urutan:4 },
+    { id:'5', kategori:'Admin & Operasional', unit:'Semua', judul:'Roster Pelajaran', url:'#', emoji:'🗓️', urutan:5 },
+    { id:'6', kategori:'Aplikasi Sekolah', unit:'Semua', judul:'Aplikasi SAVA', url:'#', emoji:'📱', urutan:1 },
+    { id:'7', kategori:'Kurikulum & Pembelajaran', unit:'Semua', judul:'Bilingual', url:'#', emoji:'🌐', urutan:1 },
+    { id:'8', kategori:'Kurikulum & Pembelajaran', unit:'Semua', judul:'File Korjen Korbid', url:'#', emoji:'🗃️', urutan:2 },
+    { id:'9', kategori:'Kurikulum & Pembelajaran', unit:'Semua', judul:'Rekap Jam dan Admin', url:'#', emoji:'⏰', urutan:3 },
+    { id:'10', kategori:'Kurikulum & Pembelajaran', unit:'SMPIT,SMAIT', judul:'Materi Sains Kelas 3-4-5', url:'#', emoji:'🔬', urutan:4 },
+    { id:'11', kategori:'Rohani & WAFA', unit:'Semua', judul:'Murattal WAFA', url:'#', emoji:'🕌', urutan:1 },
+    { id:'12', kategori:'Lainnya', unit:'Semua', judul:'Photo Gallery', url:'#', emoji:'🖼️', urutan:1 }
+  ];
+
+  // ============ Ambil data dari Apps Script ============
+  function loadLinks(){
+    if (GAS_URL.indexOf('https://script.google.com/macros/s/AKfycbzs2NhcZB3eekDXXM7hj-4LIouxp8oFH93gc3evEBQdxk5NgMxQhX2h5xnYQGWyyvfo/exec') !== -1){
+      allLinks = DEMO_LINKS;
+      renderContent();
+      return;
+    }
+    fetch(GAS_URL + '?action=getPublicLinks')
+      .then(function(res){ return res.json(); })
+      .then(function(json){
+        if (json.status === 'ok'){
+          allLinks = json.data;
+          renderContent();
+        } else {
+          showError(json.message || 'Gagal memuat data.');
+        }
+      })
+      .catch(function(){
+        showError('Tidak dapat terhubung ke server. Periksa koneksi internet Ustadz/Ustadzah.');
+      });
+  }
+
+  function showError(msg){
+    document.getElementById('contentArea').innerHTML =
+      '<div class="empty"><div class="e-icon">😔</div>' + msg + '</div>';
+  }
+
+  // ============ Render konten kategori + kartu ============
+  function renderContent(){
+    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    const filtered = allLinks.filter(function(item){
+      const unitCocok = activeUnit === 'Semua' ||
+        item.unit === 'Semua' ||
+        (item.unit || '').split(',').map(function(s){return s.trim();}).indexOf(activeUnit) !== -1;
+      const teksCocok = !keyword || item.judul.toLowerCase().indexOf(keyword) !== -1;
+      return unitCocok && teksCocok;
+    });
+
+    const grouped = {};
+    filtered.forEach(function(item){
+      if (!grouped[item.kategori]) grouped[item.kategori] = [];
+      grouped[item.kategori].push(item);
+    });
+
+    const area = document.getElementById('contentArea');
+    area.innerHTML = '';
+
+    const kategoriKeys = Object.keys(grouped);
+
+    if (kategoriKeys.length === 0 && keyword){
+      area.innerHTML = '<div class="empty"><div class="e-icon">🔍</div>Tidak ada menu yang cocok dengan pencarian "' + keyword + '".</div>';
+    } else {
+      kategoriKeys.forEach(function(kategori){
+        const items = grouped[kategori];
+        const section = document.createElement('div');
+        section.className = 'section';
+
+        const head = document.createElement('div');
+        head.className = 'section-head';
+        head.innerHTML = '<h2>' + kategori + '</h2><span class="count">' + items.length + '</span>';
+        section.appendChild(head);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        items.forEach(function(item){
+          const a = document.createElement('a');
+          a.className = 'card';
+          a.href = item.url;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.innerHTML = '<div class="icon">' + item.emoji + '</div><div class="title">' + item.judul + '</div>';
+          grid.appendChild(a);
+        });
+        section.appendChild(grid);
+        area.appendChild(section);
+      });
+    }
+
+    // Tambahkan folder terproteksi hanya bila tidak sedang mencari kata kunci
+    if (!keyword){
+      renderProtectedSections(area);
+    }
+  }
+
+  function renderProtectedSections(area){
+    PROTECTED_GROUPS.forEach(function(grp){
+      const section = document.createElement('div');
+      section.className = 'section';
+
+      const head = document.createElement('div');
+      head.className = 'section-head';
+      head.innerHTML = '<h2>' + grp.emoji + ' ' + grp.label + '</h2><span class="count">🔒 Terproteksi</span>';
+      section.appendChild(head);
+
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+
+      if (unlockedGroups[grp.key]){
+        unlockedGroups[grp.key].forEach(function(item){
+          const a = document.createElement('a');
+          a.className = 'card';
+          a.href = item.url;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.innerHTML = '<div class="icon">' + item.emoji + '</div><div class="title">' + item.judul + '</div>';
+          grid.appendChild(a);
+        });
+      } else {
+        const card = document.createElement('div');
+        card.className = 'card locked';
+        card.onclick = function(){ openModal(grp.key, grp.label); };
+        card.innerHTML = '<div class="icon">🔒</div><div class="title">Masukkan Password</div>';
+        grid.appendChild(card);
+      }
+
+      section.appendChild(grid);
+      area.appendChild(section);
+    });
+  }
+
+  // ============ Modal unlock ============
+  function openModal(groupKey, label){
+    currentUnlockGroup = groupKey;
+    document.getElementById('modalTitle').textContent = label;
+    document.getElementById('modalPassword').value = '';
+    document.getElementById('modalMsg').textContent = '';
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+  function closeModal(){
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+  function submitUnlock(){
+    const password = document.getElementById('modalPassword').value;
+    const msgEl = document.getElementById('modalMsg');
+    if (!password){
+      msgEl.textContent = 'Password tidak boleh kosong.';
+      return;
+    }
+    msgEl.textContent = 'Memeriksa…';
+
+    if (GAS_URL.indexOf('PASTE_URL') !== -1){
+      // Mode demo (backend belum terpasang) — gunakan password "demo123"
+      setTimeout(function(){
+        if (password === 'demo123'){
+          unlockedGroups[currentUnlockGroup] = [
+            { id:'d1', judul: currentUnlockGroup === 'YAYASAN' ? 'Laporan Keuangan Yayasan' : 'Dashboard Eksekutif', url:'#', emoji: currentUnlockGroup === 'YAYASAN' ? '💰' : '📊' }
+          ];
+          closeModal();
+          renderContent();
+        } else {
+          msgEl.textContent = 'Password salah. Coba "demo123" untuk mode pratinjau.';
+        }
+      }, 300);
+      return;
+    }
+
+    fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'unlock', grup: currentUnlockGroup, password: password })
+    })
+      .then(function(res){ return res.json(); })
+      .then(function(json){
+        if (json.status === 'ok'){
+          unlockedGroups[currentUnlockGroup] = json.data;
+          closeModal();
+          renderContent();
+        } else {
+          msgEl.textContent = json.message || 'Password salah.';
+        }
+      })
+      .catch(function(){
+        msgEl.textContent = 'Gagal terhubung ke server.';
+      });
+  }
+
+  // ============ Init ============
+  document.getElementById('searchInput').addEventListener('input', renderContent);
+  initGreeting();
+  renderFilters();
+  loadLinks();
+</script>
+
+</body>
+</html>
